@@ -126,7 +126,7 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 | t7 | ------ |```UPDATE EMP SET SAL = 5000 WHERE ENAME ='Hichem';```|Pas de résultat|
 | t8 | ```Commit;``` |------|Le salaire de Hichem a été modifié|
 | t9 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
-| t10| ------ |```COMMIT;```|Saliare modifié après commit|
+| t10| ------ |```COMMIT;```|Salaire modifié après commit|
 | t11| ```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|------|
 
 
@@ -137,28 +137,28 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 | Timing | Session N° 1  | Session N° 2 |Résultat | 
 | :----: | :----: |:----:|:----:|
 | t0| ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` |||
-| t1| ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|------|
-| t2| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|------|
+| t1| ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|Le salaire de Hichem a été modifié (4000)|
+| t2| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Isolation Totale|
 | t3| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');```|------|
-| t4| ------ |```UPDATE EMP SET SAL = 3800 WHERE ENAME ='Mohamed';```|------|
-| t5| ```Insert into EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,COMM,DEPTNO) values ('9999','Maaoui','Magician',null,to_date('17/02/2021','DD/MM/RR'),null,'10');``` |------|------|
-| t6| ```COMMIT;```|------ |------|
+| t4| ------ |```UPDATE EMP SET SAL = 3800 WHERE ENAME ='Mohamed';```|Le salaire de Mohamed a été modifié (3800)|
+| t5| ```Insert into EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,COMM,DEPTNO) values ('9999','Maaoui','Magician',null,to_date('17/02/2021','DD/MM/RR'),null,'10');``` |------|Insertion effectuée|
+| t6| ```COMMIT;```|------ |Conservation des changements avec commit|
 | t7|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |------|
 | t8| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
-| t9| ```Commit;``` |------|------|
+| t9| ```Commit;``` |------|Conservation des changements avec commit|
 | t10|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |------|
 | t11| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
-| t12| ------ | ```COMMIT;```|------|
-| t13| ``` UPDATE EMP SET SAL = 5000 WHERE ENAME ='Maaoui'; ``` |------|------|
-| t14| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|------|
-| t15| ------ |```UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui';```|------|
-| t16| ```COMMIT;``` |------|------|
-| t17| ------ |```ROLLBACK;```|------|
-| t18| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|------|
+| t12| ------ | ```COMMIT;```|Conservation des changements avec commit|
+| t13| ``` UPDATE EMP SET SAL = 5000 WHERE ENAME ='Maaoui'; ``` |------|Le salaire de Maaoui a été modifié (5000)|
+| t14| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Isolation Totale|
+| t15| ------ |```UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui';```|Pas de changement de salaire (verrouillage dans la session 1 sur la ligne ENAME ='Maaoui')|
+| t16| ```COMMIT;``` |------|La ligne ENAME ='Maaoui' n’est plus verrouillée|
+| t17| ------ |```ROLLBACK;```|Retour au dernier Commit --> faire une nouvelle isolation avec les dernières MAJ de Maaoui|
+| t18| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Isolation Totale|
 | t19| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
-| t20| ``` UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui'; ``` |------|------|
-| t21| ```COMMIT;``` |------|------|
-| t22| ------ | ```COMMIT;```|------|
+| t20| ``` UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui'; ``` |------|Le salaire de Maaoui a été modifié (5200)|
+| t21| ```COMMIT;``` |------|Conservation des changements avec commit avec succès|
+| t22| ------ | ```COMMIT;```|Conservation des changements avec commit avec succès|
 | t23| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
 
 
