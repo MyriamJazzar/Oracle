@@ -190,6 +190,16 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
      * Création,lecture, modification de structure et suppression de tables.
 
 ```sql
+GRANT
+CREATE PROCEDURE,
+CREATE VIEW,
+CREATE SEQUENCE,
+CREATE SESSION,
+CREATE ANY TABLE ,
+SELECT ANY TABLE,
+ALTER ANY TABLE ,
+DROP ANY TABLE
+TO dev1;
 ---
 ```
 
@@ -199,6 +209,17 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
    - **Révoquer tous les privilèges associès à l'utilisateur dev1 :** 
 
 ```sql
+REVOKE 
+CREATE PROCEDURE,
+CREATE VIEW,
+CREATE SEQUENCE,
+CREATE SESSION,
+CREATE ANY TABLE ,
+SELECT ANY TABLE,
+ALTER ANY TABLE ,
+DROP ANY TABLE
+FROM 
+dev1;
 ---
 ```
 
@@ -222,15 +243,34 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
      C) Le rôle de l'équipe DevSecOps permet d'avoir tous les privilèges avec mode administrateur de la base:  
 
 ```sql
+CREATE role DevT;
+GRANT 
+CREATE PROCEDURE,
+CREATE VIEW,
+CREATE SEQUENCE,
+CREATE SESSION,
+CREATE ANY TABLE,
+SELECT ANY TABLE,
+ALTER ANY TABLE,
+DROP ANY TABLE
+TO DevT;
 ---
 ```
 ```sql
+create role TestT;
+GRANT 
+CONNECT,
+SELECT ANY TABLE,
+CREATE SESSION 
+TO TestT;
 ---
 ```
 ```sql
----
-```
-```sql
+create role DevSecOpsT;
+GRANT 
+ALL PRIVILEGES 
+TO DevSecOpsT
+WITH ADMIN OPTION;
 ---
 ```
 
@@ -240,12 +280,21 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
   
 
 ```sql
+GRANT
+DevT
+TO dev1,dev2;
 ---
 ```
 ```sql
+GRANT 
+TestT 
+TO tester1,tester2;
 ---
 ```
 ```sql
+GRANT 
+DevSecOpsT
+To devsecops1,devsecops2;
 ---
 ```
 
@@ -253,10 +302,16 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
   
 
 ```sql
+REVOKE
+SELECT ANY TABLE 
+FROM TestT;
 ---
 ```
 
  ```sql
+GRANT 
+SELECT ON emp
+TO TestT;
 ---
 ```
  
@@ -266,6 +321,9 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
   
 
  ```sql
+GRANT
+SELECT ON emp 
+TO public;
 ---
 ```
 
@@ -274,6 +332,9 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
  
  
 ```sql
+REVOKE
+ALL PRIVILEGES
+FROM DevSecOpsT;
 ---
 ```
 
@@ -292,6 +353,17 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
 
 
 ```sql 
+CREATE PROFILE devProfile 
+LIMIT
+SESSIONS_PER_USER UNLIMITED
+CPU_PER_SESSION 10000
+CPU_PER_CALL 1000
+CONNECT_TIME 45
+LOGICAL_READS_PER_SESSION DEFAULT
+LOGICAL_READS_PER_CALL 1000
+PRIVATE_SGA 25K
+PASSWORD_LIFE_TIME 60
+PASSWORD_REUSE_TIME 10;
 ---
 ```
 
@@ -309,6 +381,17 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
   * ***Durée de vie en jours du mot de passe:*** ***60***
   * ***Nombre maximal de réutilisations de mot de passe:*** ***10***
 ```sql 
+CREATE PROFILE testProfile
+LIMIT
+SESSIONS_PER_USER 5
+CPU_PER_SESSION UNLIMITED
+CPU_PER_CALL 3000
+CONNECT_TIME 45
+LOGICAL_READS_PER_SESSION DEFAULT
+LOGICAL_READS_PER_CALL 1000
+PRIVATE_SGA 25K
+PASSWORD_LIFE_TIME 60
+PASSWORD_REUSE_TIME 10;
 ---
 ```
 
@@ -324,11 +407,23 @@ CREATE USER devsecops2 IDENTIFIED by devsecops2
   * ***Nombre maximal de réutilisations de mot de passe:*** ***10***
 
 ```sql 
+CREATE PROFILE devsecopsProfile 
+LIMIT
+SESSIONS_PER_USER UNLIMITED
+CPU_PER_SESSION UNLIMITED
+CPU_PER_CALL 3000
+CONNECT_TIME 3600
+LOGICAL_READS_PER_SESSION DEFAULT
+LOGICAL_READS_PER_CALL 5000
+PRIVATE_SGA 80K
+PASSWORD_LIFE_TIME 60
+PASSWORD_REUSE_TIME 10;
 ---
 ```
 
   - **Attribuer à l'utilisateur "dev1", le profile qui lui correspond:** 
 ```sql
+ALTER USER dev1 PROFILE devProfile;
 ---
 ```
 
